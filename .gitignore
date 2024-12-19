@@ -1,0 +1,6 @@
+.venv
+data/*
+!data/Readme.md
+output/*
+!output/Readme.md
+__pycache__
