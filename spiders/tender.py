@@ -1,19 +1,18 @@
 from re import sub
 from json import load
 from scrapy import Selector, Spider, Request
-from time import sleep
+from random import shuffle
 
 
 # Create the Spider class
 class LPSESpiderTender(Spider):
     name = "lpsespidertender"
-    id = 0
     data = dict()
-    # Custom headers
-    headers = {
-        "referer": "https://lpse.lkpp.go.id/eproc4/lelang?kategoriId=&tahun=&instansiId=&rekanan=&kontrak_status=&kontrak_tipe=",
-        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        "Cookie": "SPSE_SESSION=6cc9c9e6a5d17422816227504113c72e308aa541-___AT=820e4823d184b209a0e5840679dd7e769064ff1e&___TS=1734450500724&___ID=0172250d-92ca-4b0a-9de1-2efeb0d37c83; _cfuvid=J1AQW8E9Q817XZI4MF2zrkMOVaIvDOjArETseiAm00o-1734448688196-0.0.1.1-604800000",
+    custom_settings = {
+        "DOWNLOAD_DELAY": 0.1,
+        "CONCURRENT_REQUESTS": 4,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 4,
+        "AUTOTHROTTLE_ENABLED": False,
     }
 
     # start_requests method
@@ -47,50 +46,30 @@ class LPSESpiderTender(Spider):
             for id in ids
         ]
 
-        # Pengumuman
-        for url in iter(pengumuman_lelang_urls):
-            self.id = int(url.split("/")[5])
-            yield Request(url=url, headers=self.headers, callback=self.parse_pengumuman)
-            sleep(1)
+        # Combine all URLs into a single list of tuples (url, callback)
+        all_requests = (
+            [(url, self.parse_pengumuman) for url in pengumuman_lelang_urls]
+            + [(url, self.parse_peserta) for url in peserta_urls]
+            + [(url, self.parse_pemenang) for url in pemenang_urls]
+            + [
+                (url, self.parse_pemenang_berkontrak)
+                for url in pemenang_berkontrak_urls
+            ]
+        )
+        shuffle(all_requests)
 
-            # TODO: Comments
-            # if len(self.data) >= 2:
-            #     break
-
-        # Peserta
-        for url in iter(peserta_urls):
-            self.id = int(url.split("/")[5])
-            yield Request(url=url, headers=self.headers, callback=self.parse_peserta)
-            sleep(1)
-
-            # TODO: Comments
-            # if len(self.data) >= 2:
-            #     break
-
-        # Pemenang
-        for url in iter(pemenang_urls):
-            self.id = int(url.split("/")[5])
-            yield Request(url=url, headers=self.headers, callback=self.parse_pemenang)
-            sleep(1)
-
-            # TODO: Comments
-            # if len(self.data) >= 2:
-            #     break
-
-        # Pemenang Berkontrak
-        for url in iter(pemenang_berkontrak_urls):
-            self.id = int(url.split("/")[5])
-            yield Request(
-                url=url, headers=self.headers, callback=self.parse_pemenang_berkontrak
-            )
-            sleep(1)
-
-            # TODO: Comments
-            # if len(self.data) >= 2:
-            #     break
+        # Run spider request
+        for url, callback in all_requests:
+            headers = {
+                "referer": url,
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                "Cookie": "SPSE_SESSION=6cc9c9e6a5d17422816227504113c72e308aa541-___AT=820e4823d184b209a0e5840679dd7e769064ff1e&___TS=1734450500724&___ID=0172250d-92ca-4b0a-9de1-2efeb0d37c83; _cfuvid=J1AQW8E9Q817XZI4MF2zrkMOVaIvDOjArETseiAm00o-1734448688196-0.0.1.1-604800000",
+            }
+            id = int(url.split("/")[5])
+            yield Request(url=url, headers=headers, callback=callback, meta={"id": id})
 
     def parse_pengumuman(self, response):
-        # Extract all tables
+        id = response.meta["id"]
         tables = response.xpath('//table[contains(@class,"table-bordered")]/tr')
         titles = tables.xpath("./th/text()").extract()
         contents = tables.xpath("./td").extract()
@@ -107,10 +86,10 @@ class LPSESpiderTender(Spider):
                 [item for item in clean_content if item]
             )  # Remove empty strings
         if pengumuman:
-            self.data[self.id]["Pengumuman"] = pengumuman
+            self.data[id]["Pengumuman"] = pengumuman
 
     def parse_peserta(self, response):
-        # Extract all tables
+        id = response.meta["id"]
         tables = response.xpath('//table[contains(@class,"table")]')
         titles = tables.xpath("./thead/tr/th//text()").extract()
         contents = tables.xpath("./tbody/tr/td").extract()
@@ -128,10 +107,10 @@ class LPSESpiderTender(Spider):
                 [x for x in content.css("::text").extract()]
             ).strip()
         if len(peserta_list) > 0:
-            self.data[self.id]["Peserta"] = peserta_list
+            self.data[id]["Peserta"] = peserta_list
 
     def parse_pemenang(self, response):
-        # Extract all tables
+        id = response.meta["id"]
         contents = response.xpath('//div[@class="content"]/table/tr').extract()
         content_length = len(contents)
         pemenang = dict()
@@ -153,10 +132,10 @@ class LPSESpiderTender(Spider):
                 value = "".join(content.css("td::text").extract()).strip()
                 pemenang[key] = value
         if pemenang:
-            self.data[self.id]["Pemenang"] = pemenang
+            self.data[id]["Pemenang"] = pemenang
 
     def parse_pemenang_berkontrak(self, response):
-        # Extract all tables
+        id = response.meta["id"]
         contents = response.xpath('//div[@class="content"]/table/tr').extract()
         content_length = len(contents)
         pemenang_berkontrak = dict()
@@ -178,4 +157,4 @@ class LPSESpiderTender(Spider):
                 value = "".join(content.css("td::text").extract()).strip()
                 pemenang_berkontrak[key] = value
         if pemenang_berkontrak:
-            self.data[self.id]["Pemenang Berkontrak"] = pemenang_berkontrak
+            self.data[id]["Pemenang Berkontrak"] = pemenang_berkontrak
