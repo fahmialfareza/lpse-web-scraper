@@ -5,7 +5,7 @@ from scrapy.signalmanager import dispatcher
 from spiders.tender import LPSESpiderTender
 from downloader.tender import download_tender_data
 from preprocessing.tender import clean_tender_data
-from analyzer.tender import analyze_tender
+from analyzer.tender import TenderAnalyzer
 
 
 def run_downloader():
@@ -43,9 +43,11 @@ def run_preprocessing():
 # clean_tender_data()
 
 # Run analyzer
-analyze_tender(
-    jenis_tender=None,
-    tahapan="Tender Sudah Selesai",
-    mulai_tahun=2020,
-    selesai_tahun=2024,
+tender_analyzer = TenderAnalyzer()
+tender_analyzer.filter_and_group_tender_data(
+    tender_type=None,
+    phase="Tender Sudah Selesai",
+    start_year=2020,
+    end_year=2024,
 )
+tender_analyzer.visualize_tender_data(visualize_tender_type="Jumlah Tender", top=20)
