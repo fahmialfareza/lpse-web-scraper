@@ -18,7 +18,7 @@ class LPSESpiderTender(Spider):
     # start_requests method
     def start_requests(self):
         # Open and read the JSON file
-        with open("data/lpse_tender_data.json", "r") as file:
+        with open("data/downloader/lpse_tender_data.json", "r") as file:
             tenders = load(file)
         self.data = {
             int(tender[0].strip()): {

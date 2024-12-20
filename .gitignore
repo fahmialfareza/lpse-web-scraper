@@ -1,6 +1,8 @@
 .venv
-data/*
-!data/Readme.md
-output/*
-!output/Readme.md
+data/downloader/*
+data/spiders/*
+data/preprocessing/*
+!data/downloader/Readme.md
+!data/spiders/Readme.md
+!data/preprocessing/Readme.md
 __pycache__

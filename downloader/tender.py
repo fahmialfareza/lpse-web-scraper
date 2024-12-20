@@ -23,8 +23,10 @@ def download_tender_data():
         json_data = response.json()
 
         # Save to a file
-        with open("data/lpse_tender_data.json", "w", encoding="utf-8") as file:
+        with open(
+            "data/downloader/lpse_tender_data.json", "w", encoding="utf-8"
+        ) as file:
             dump(json_data, file, ensure_ascii=False, indent=4)
-        print("Data saved to data/lpse_tender_data.json")
+        print("Data saved to data/downloader/lpse_tender_data.json")
     else:
         print(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
