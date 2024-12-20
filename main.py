@@ -44,5 +44,8 @@ def run_preprocessing():
 
 # Run analyzer
 analyze_tender(
-    jenis_tender="Pengadaan Barang", tahapan="Tender Sudah Selesai", tahun=2023
+    jenis_tender=None,
+    tahapan="Tender Sudah Selesai",
+    mulai_tahun=2020,
+    selesai_tahun=2024,
 )

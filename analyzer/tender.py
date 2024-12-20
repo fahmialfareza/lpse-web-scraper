@@ -4,7 +4,9 @@ from matplotlib.ticker import FuncFormatter, MaxNLocator
 from utils.converter import rupiah_format
 
 
-def analyze_tender(tahapan, tahun, jenis_tender):
+def analyze_tender(
+    tahapan=None, mulai_tahun=None, selesai_tahun=None, jenis_tender=None
+):
     """Analyze tender
 
     Args:
@@ -42,17 +44,20 @@ def analyze_tender(tahapan, tahun, jenis_tender):
             df[col], errors="coerce"
         )  # Convert to numeric, replace non-numeric with NaN
 
-    # Filter rows where 'Tahapan' is 'Tender Sudah Selesai',
-    # 'Jenis Pengadaan' is 'Jasa Lainnya', and 'Tanggal Pembuatan' is in 2024
-    filtered_data = df[
-        (df["Tahapan"] == tahapan)
-        & (df["Jenis Pengadaan"] == jenis_tender)
-        & (df["Tanggal Pembuatan"].dt.year == tahun)
-    ]
+    # Apply filters only if arguments are provided
+    if tahapan:
+        df = df[df["Tahapan"] == tahapan]
+    if jenis_tender:
+        df = df[df["Jenis Pengadaan"] == jenis_tender]
+    if mulai_tahun and selesai_tahun:
+        df = df[
+            (df["Tanggal Pembuatan"].dt.year >= mulai_tahun)
+            & (df["Tanggal Pembuatan"].dt.year <= selesai_tahun)
+        ]
 
     # Group by 'Nama Pemenang'
     grouped_data = (
-        filtered_data.groupby("Nama Pemenang")
+        df.groupby("Nama Pemenang")
         .agg(
             {
                 "Nama Pemenang": "size",  # Count occurrences of 'Nama Pemenang'
@@ -70,28 +75,36 @@ def analyze_tender(tahapan, tahun, jenis_tender):
     # Reset index for better readability
     grouped_data = grouped_data.reset_index()
 
-    # Display the results
-    # Plotting the Count of Nama Pemenang
+    # Get top 10 by Count
+    top_10_count = grouped_data.nlargest(10, "Count")
+
+    # Plotting the Top 10 Count of Nama Pemenang
     plt.figure(figsize=(10, 6))
-    plt.bar(grouped_data["Nama Pemenang"], grouped_data["Count"])
+    plt.bar(top_10_count["Nama Pemenang"], top_10_count["Count"])
     plt.xlabel("Nama Pemenang")
     plt.ylabel("Jumlah Tender")
     plt.title(
-        f"Jumlah Tender Dengan Jenis Pengadaan {jenis_tender} Berdasarkan Pemenang Tender Tahun {tahun}"
+        f"Top 10 Jumlah Tender Dengan Jenis Pengadaan {jenis_tender or 'Semua'} Berdasarkan Pemenang Tender Tahun {mulai_tahun or 'Awal'} - {selesai_tahun or 'Akhir'}"
     )
     plt.xticks(rotation=45, ha="right")
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
     plt.tight_layout()
     plt.show()
 
-    # Plotting the Sum of Harga Penawaran
+    # Get top 10 by Harga Penawaran
+    top_10_harga_penawaran = grouped_data.nlargest(10, "Harga Penawaran")
+
+    # Plotting the Top 10 Harga Penawaran
     formatter = FuncFormatter(rupiah_format)
     plt.figure(figsize=(10, 6))
-    plt.bar(grouped_data["Nama Pemenang"], grouped_data["Harga Penawaran"])
+    plt.bar(
+        top_10_harga_penawaran["Nama Pemenang"],
+        top_10_harga_penawaran["Harga Penawaran"],
+    )
     plt.xlabel("Nama Pemenang")
     plt.ylabel("Total Harga Penawaran")
     plt.title(
-        f"Total Harga Penawaran Dengan Jenis Pengadaan {jenis_tender} Berdasarkan Pemenang Tender Tahun {tahun}"
+        f"Top 10 Total Harga Penawaran Dengan Jenis Pengadaan {jenis_tender or 'Semua'} Berdasarkan Pemenang Tender Tahun {mulai_tahun or 'Awal'} - {selesai_tahun or 'Akhir'}"
     )
     plt.xticks(rotation=45, ha="right")
     plt.gca().yaxis.set_major_formatter(formatter)
