@@ -6,3 +6,4 @@ data/preprocessing/*
 !data/spiders/Readme.md
 !data/preprocessing/Readme.md
 __pycache__
+.env

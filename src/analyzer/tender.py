@@ -41,6 +41,10 @@ class TenderAnalyzer:
             "data/preprocessing/data_tender.json", convert_dates=["Tanggal Pembuatan"]
         )
 
+        if self.start_year == None or self.end_year == None:
+            self.start_year = int(df["Tanggal Pembuatan"].dt.year.min())
+            self.end_year = int(df["Tanggal Pembuatan"].dt.year.max())
+
         # Convert numeric columns to proper numeric types
         numeric_columns = [
             "Harga Penawaran",
@@ -86,13 +90,14 @@ class TenderAnalyzer:
         # Reset index for better readability
         self.grouped_data = grouped_data.reset_index()
 
-    def visualize_tender_data(self, visualize_tender_type, top):
+    def visualize_tender_data(self, visualize_tender_type="Jumlah Tender", top=10):
         """Visualize tender data
 
         Args:
             visualize_tender_type (str): Type of visualization to be performed
-                - "Jumlah Tender"
+                - "Jumlah Tender" (default)
                 - "Total Harga Penawaran"
+            top (int): Number of top results to be displayed
         """
 
         match visualize_tender_type:
@@ -136,3 +141,40 @@ class TenderAnalyzer:
 
             case _:
                 print("Invalid visualization type")
+
+
+def run_tender_analyzer(
+    tender_type=None,
+    phase=None,
+    start_year=None,
+    end_year=None,
+    visualize_tender_type="Jumlah Tender",
+    top=10,
+):
+    """Run the tender analyzer with the given parameters.
+
+    Args:
+        tender_type (str, optional): The type of tender to analyze. Defaults to None.
+        phase (str, optional): The phase of the tender to analyze. Defaults to None.
+        start_year (int, optional): The start year of the tender to analyze. Defaults to None.
+        end_year (int, optional): The end year of the tender to analyze. Defaults to None.
+        visualize_tender_type (str, optional): The type of visualization to perform. Defaults to "Jumlah Tender".
+        top (int, optional): The number of top results to display. Defaults to 10.
+    Returns:
+        None
+    Raises:
+        ValueError: If the visualize_tender_type is not one of the allowed values.
+    Example:
+        run_tender_analyzer(tender_type="Pemilihan Pemerintah Daerah", phase="Pengadaan Barang/Jasa", start_year=2020, end_year=2022, visualize_tender_type="Jumlah Tender", top=5)
+    """
+
+    tender_analyzer = TenderAnalyzer()
+    tender_analyzer.filter_and_group_tender_data(
+        tender_type=tender_type,
+        phase=phase,
+        start_year=start_year,
+        end_year=end_year,
+    )
+    tender_analyzer.visualize_tender_data(
+        visualize_tender_type=visualize_tender_type, top=top
+    )

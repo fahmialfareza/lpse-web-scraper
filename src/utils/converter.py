@@ -4,6 +4,15 @@ from datetime import datetime
 
 
 def convert_currency_to_int(currency_string):
+    """Convert Indonesian currency string to integer.
+
+    Args:
+        currency_string (str): The currency string to be converted.
+    Returns:
+        int: The converted integer value.
+    Raises:
+        ValueError: If the input string is not a valid currency format.
+    """
     # Remove non-numeric characters except ',' and '.'
     cleaned_string = re.sub(r"[^\d.,]", "", currency_string)
 
@@ -20,6 +29,16 @@ def convert_currency_to_int(currency_string):
 
 
 def convert_date_string_to_date(indonesian_date):
+    """Convert Indonesian date string to a datetime.date object.
+
+    Args:
+        indonesian_date (str): Indonesian date string in the format "DD MMM YYYY".
+    Returns:
+        datetime.date: The corresponding date object.
+    Raises:
+            ValueError: If the input string is not in the expected format.
+    """
+
     # Map Indonesian month names to English
     month_mapping = {
         "Januari": "January",
@@ -46,4 +65,13 @@ def convert_date_string_to_date(indonesian_date):
 
 
 def rupiah_format(x, _):
+    """Represent number in Rupiah format
+
+    Args:
+        x (int): number to be formatted
+        _ (str): currency code
+    Returns:
+        str: formatted number
+    """
+
     return f"Rp {x:,.0f}".replace(",", ".")
