@@ -5,14 +5,20 @@ from utils.converter import rupiah_format
 
 
 class TenderAnalyzer:
-    def __init__(self):
-        grouped_data = pd.DataFrame()
-        tender_type = None
-        start_year = None
-        end_year = None
+    def __init__(self, tender_data):
+        self.grouped_data = pd.DataFrame()
+        self.tender_type = None
+        self.start_year = None
+        self.end_year = None
+        self.tender_data = tender_data
 
     def filter_and_group_tender_data(
-        self, phase=None, start_year=None, end_year=None, tender_type=None
+        self,
+        phase=None,
+        start_year=None,
+        end_year=None,
+        tender_type=None,
+        tender_data=None,
     ):
         """Analyze tender
 
@@ -37,9 +43,9 @@ class TenderAnalyzer:
         self.start_year = start_year
         self.end_year = end_year
 
-        df = pd.read_json(
-            "data/preprocessing/data_tender.json", convert_dates=["Tanggal Pembuatan"]
-        )
+        df = pd.DataFrame(self.tender_data)
+        # Convert the 'Date' column to datetime
+        df["Tanggal Pembuatan"] = pd.to_datetime(df["Tanggal Pembuatan"])
 
         if self.start_year == None or self.end_year == None:
             self.start_year = int(df["Tanggal Pembuatan"].dt.year.min())
@@ -144,6 +150,7 @@ class TenderAnalyzer:
 
 
 def run_tender_analyzer(
+    tender_data=None,
     tender_type=None,
     phase=None,
     start_year=None,
@@ -168,7 +175,7 @@ def run_tender_analyzer(
         run_tender_analyzer(tender_type="Pemilihan Pemerintah Daerah", phase="Pengadaan Barang/Jasa", start_year=2020, end_year=2022, visualize_tender_type="Jumlah Tender", top=5)
     """
 
-    tender_analyzer = TenderAnalyzer()
+    tender_analyzer = TenderAnalyzer(tender_data=tender_data)
     tender_analyzer.filter_and_group_tender_data(
         tender_type=tender_type,
         phase=phase,

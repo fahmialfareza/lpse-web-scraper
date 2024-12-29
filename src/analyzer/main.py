@@ -1,4 +1,5 @@
 from analyzer.tender import run_tender_analyzer
+from preprocessing.main import run_preprocessing
 
 
 def run_analyzer(
@@ -27,9 +28,15 @@ def run_analyzer(
     Examples:
         run_analyzer(data_type="tender", tender_type="Jasa", phase="Pengadaan", start_year=2020, end_year=2022, visualize_tender_type="Jumlah Tender", top=10)
     """
+
+    # Run preprocessing
+    clean_data = run_preprocessing()
+    tender_clean_data = clean_data.get("Tender")
+
     match data_type:
         case "tender":
             run_tender_analyzer(
+                tender_data=tender_clean_data,
                 end_year=end_year,
                 phase=phase,
                 start_year=start_year,

@@ -2,6 +2,7 @@ from downloader.main import run_downloader
 from spiders.main import run_spiders
 from preprocessing.main import run_preprocessing
 from analyzer.main import run_analyzer
+from db.main import save_to_db
 
 
 # Run downloader first
@@ -10,8 +11,8 @@ from analyzer.main import run_analyzer
 # Run the spider
 # run_spiders()
 
-# Run preprocessing
-# run_preprocessing()
+# Save to db
+# save_to_db()
 
 # Run analyzer
-run_analyzer(visualize_tender_type="Total Harga Penawaran")
+run_analyzer()

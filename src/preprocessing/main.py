@@ -10,4 +10,8 @@ def run_preprocessing():
         None
     """
 
-    clean_tender_data()
+    tenders_clean = clean_tender_data()
+
+    data = dict()
+    data["Tender"] = tenders_clean
+    return data
