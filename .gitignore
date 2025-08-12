@@ -1,9 +1,0 @@
-.venv
-data/downloader/*
-data/spiders/*
-data/preprocessing/*
-!data/downloader/Readme.md
-!data/spiders/Readme.md
-!data/preprocessing/Readme.md
-__pycache__
-.env

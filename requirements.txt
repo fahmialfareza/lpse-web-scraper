@@ -1,7 +1,0 @@
-requests
-scrapy
-pandas
-matplotlib
-python-dotenv
-sqlalchemy
-psycopg2
