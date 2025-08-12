@@ -3,6 +3,7 @@ node_modules/
 .DS_Store
 .env.development
 .env.production
+.env
 access.log
 
 newrelic_agent.log
