@@ -50,5 +50,9 @@ def download_tender_data():
         with open(file_path, "w", encoding="utf-8") as file:
             dump(json_data, file, ensure_ascii=False, indent=4)
         print(f"Data saved to {file_path}")
+
+        return file_path
     else:
-        print(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
+        raise Exception(
+            f"Failed to fetch data. HTTP Status Code: {response.status_code}"
+        )

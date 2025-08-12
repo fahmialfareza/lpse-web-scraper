@@ -381,3 +381,5 @@ def save_to_tender_db():
     insert_tender_peserta_data()
     insert_tender_pemenang_data()
     insert_tender_pemenang_berkontrak_data()
+
+    return True

@@ -16,9 +16,17 @@ def register_cron_events(app: FastAPI):
         async def get_data_job() -> None:
             now = datetime.datetime.utcnow()
             if now.hour == 0 and now.minute == 0:
-                run_downloader()
-                run_spiders()
-                save_to_db()
+                file_path_download = run_downloader()
+                if not file_path_download or file_path_download == "":
+                    return
+
+                file_path_spider = run_spiders()
+                if not file_path_spider or file_path_spider == "":
+                    return
+
+                is_save_db_success = save_to_db()
+                if not is_save_db_success:
+                    return
 
         yield
 

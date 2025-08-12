@@ -13,4 +13,5 @@ def run_downloader():
         None
     """
 
-    download_tender_data()
+    file_path = download_tender_data()
+    return file_path

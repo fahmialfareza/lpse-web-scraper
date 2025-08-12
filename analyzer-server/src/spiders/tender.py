@@ -197,6 +197,8 @@ def run_tender_spiders():
             dump(spider.data, file, ensure_ascii=False, indent=4)
         print(f"Data saved to {file_path}")
 
+        return file_path
+
     # Run the Spider
     process = CrawlerProcess()
 

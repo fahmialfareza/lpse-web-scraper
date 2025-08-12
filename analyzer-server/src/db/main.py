@@ -3,7 +3,7 @@ from db.tender_select import fetch_left_join_tender_results
 
 
 def save_to_db():
-    save_to_tender_db()
+    return save_to_tender_db()
 
 
 def get_tender_data():

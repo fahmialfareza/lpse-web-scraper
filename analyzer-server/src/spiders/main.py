@@ -10,4 +10,4 @@ def run_spiders():
     - tender
     """
 
-    run_tender_spiders()
+    return run_tender_spiders()
