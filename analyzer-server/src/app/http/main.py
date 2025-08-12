@@ -24,9 +24,7 @@ async def analyze(
         visualize_tender_type=visualize_tender_type,
         top=top,
     )
-    if isinstance(analyzer, str) and analyzer.startswith(
-        "/Users/fahmialfareza/Code/mas-arif-project/lpse-web-scraper/tmp/"
-    ):
+    if isinstance(analyzer, str) and not analyzer.startswith("/public"):
         filename = analyzer.split("/")[-1]
         analyzer = f"/public/{filename}"
 

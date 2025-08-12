@@ -1,4 +1,4 @@
-require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+require("dotenv").config();
 
 exports.config = {
   app_name: process.env.NEW_RELIC_APP_NAME,

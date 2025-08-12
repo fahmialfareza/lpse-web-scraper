@@ -7,5 +7,5 @@ access.log
 
 newrelic_agent.log
 dist
-tmp/*
-!tmp/Readme.md
+public/*
+!public/Readme.md
