@@ -1,6 +1,6 @@
 "use client";
 
-import { getProfile } from "@/services/auth";
+import { getProfile, logout } from "@/services/auth";
 import useStore from "@/zustand";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,12 +9,12 @@ import { toast } from "react-toastify";
 
 const Navbar = () => {
   const router = useRouter();
-  const { token, user, setUser, logout } = useStore();
+  const { token, user, setUser, logout: logoutUser } = useStore();
 
   useEffect(() => {
     if (token) {
       const fetchProfile = async () => {
-        const { data, message } = await getProfile(token, logout);
+        const { data, message } = await getProfile(token, logoutUser);
         if (!data) {
           toast.error(message);
           return;
@@ -88,10 +88,13 @@ const Navbar = () => {
           bg-gradient-to-r from-blue-500 to-blue-700
           text-white shadow hover:from-blue-600 hover:to-blue-800
           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault();
-                  logout();
-                  router.push("/auth/login");
+                  const message = await logout();
+                  if (message === "Logged out") {
+                    logoutUser();
+                    router.push("/auth/login");
+                  }
                 }}
               >
                 Logout
@@ -122,13 +125,16 @@ const Navbar = () => {
           {user ? (
             <a
               className="block px-3 py-2 rounded-md text-base font-semibold bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow hover:from-blue-600 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
-                logout();
-                router.push("/auth/login");
-                // Hide menu after logout
-                const menu = document.getElementById("mobile-menu");
-                if (menu) menu.classList.add("hidden");
+                const message = await logout();
+                if (message === "Logged out") {
+                  logoutUser();
+                  router.push("/auth/login");
+                  // Hide menu after logout
+                  const menu = document.getElementById("mobile-menu");
+                  if (menu) menu.classList.add("hidden");
+                }
               }}
             >
               Logout

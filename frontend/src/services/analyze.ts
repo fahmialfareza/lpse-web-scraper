@@ -1,10 +1,11 @@
 import { TFilterState } from "@/app/page";
 import { redirect } from "next/navigation";
+import { logout } from "./auth";
 
 export const getAnalyzeData = async (
   filters: TFilterState,
   token?: string,
-  logout?: () => void
+  logoutUser?: () => void
 ) => {
   if (!token) redirect("/auth/login");
 
@@ -29,8 +30,9 @@ export const getAnalyzeData = async (
     },
   });
   if (response.status === 401) {
-    if (logout) {
-      logout();
+    await logout();
+    if (logoutUser) {
+      logoutUser();
     }
     redirect("/auth/login");
   }
