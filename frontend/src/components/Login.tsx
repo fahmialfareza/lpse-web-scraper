@@ -34,12 +34,12 @@ export default function Login() {
   }, [router, user]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      <div className="w-full max-w-md p-8 rounded-xl shadow-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
-        <h2 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-4">
+      <div className="w-full max-w-md p-6 sm:p-8 rounded-xl shadow-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 text-gray-800 dark:text-white">
           Welcome Back
         </h2>
-        <form className="space-y-5" onSubmit={onSubmit}>
+        <form className="space-y-4 sm:space-y-5" onSubmit={onSubmit}>
           <div>
             <label
               className="block text-gray-700 dark:text-gray-300 mb-1"
@@ -54,7 +54,7 @@ export default function Login() {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 sm:px-4 sm:py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="username"
             />
           </div>
@@ -72,7 +72,7 @@ export default function Login() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 sm:px-4 sm:py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
             />
           </div>
@@ -83,7 +83,7 @@ export default function Login() {
             Sign In
           </button>
         </form>
-        <div className="mt-6 text-center text-gray-600 dark:text-gray-400 text-sm">
+        <div className="mt-4 sm:mt-6 text-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
           Don&apos;t have an account?{" "}
           <a href="#" className="text-blue-600 hover:underline">
             Sign up
