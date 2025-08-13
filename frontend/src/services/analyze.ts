@@ -1,7 +1,11 @@
 import { TFilterState } from "@/app/page";
 import { redirect } from "next/navigation";
 
-export const getAnalyzeData = async (filters: TFilterState, token?: string) => {
+export const getAnalyzeData = async (
+  filters: TFilterState,
+  token?: string,
+  logout?: () => void
+) => {
   if (!token) redirect("/auth/login");
 
   const params = new URLSearchParams();
@@ -24,6 +28,13 @@ export const getAnalyzeData = async (filters: TFilterState, token?: string) => {
       Authorization: `Bearer ${token}`,
     },
   });
+  if (response.status === 401) {
+    if (logout) {
+      logout();
+    }
+    redirect("/auth/login");
+  }
+
   return response.json();
 };
 

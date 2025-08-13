@@ -1,6 +1,6 @@
 "use client";
 
-import { getAnalyzeData } from "@/services/analyze";
+import { clearData, getAnalyzeData } from "@/services/analyze";
 import useStore from "@/zustand";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,7 @@ export type TFilterState = {
 
 export default function TenderAnalysis() {
   const router = useRouter();
-  const { token } = useStore();
+  const { token, user, logout } = useStore();
 
   const currentYear = new Date().getFullYear();
   const [filters, setFilters] = useState<TFilterState>({
@@ -46,25 +46,6 @@ export default function TenderAnalysis() {
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      setLoading(true);
-
-      try {
-        const { data } = await getAnalyzeData(filters, token);
-        if (data) {
-          setImageUrl(`${process.env.NEXT_PUBLIC_BACKEND_URL}${data}`);
-        } else {
-          setImageUrl(null);
-        }
-      } catch {
-        setImageUrl(null);
-      }
-      setLoading(false);
-    };
-    fetchImage();
-  }, [filters, token]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
@@ -81,9 +62,35 @@ export default function TenderAnalysis() {
     }));
   };
 
-  if (!token) {
-    router.push("/auth/login");
-  }
+  useEffect(() => {
+    const fetchImage = async () => {
+      setLoading(true);
+
+      try {
+        const { data } = await getAnalyzeData(filters, token, logout);
+        if (data) {
+          setImageUrl(`${process.env.NEXT_PUBLIC_BACKEND_URL}${data}`);
+        } else {
+          setImageUrl(null);
+        }
+      } catch {
+        setImageUrl(null);
+      }
+      setLoading(false);
+    };
+    fetchImage();
+  }, [filters, token, logout]);
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/auth/login");
+    }
+    if (token) {
+      (async () => {
+        await clearData(token);
+      })();
+    }
+  }, [router, token]);
 
   return (
     <div className="container mx-auto px-4 py-8">

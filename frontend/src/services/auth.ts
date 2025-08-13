@@ -16,7 +16,7 @@ export async function login(username: string, password: string) {
   return data;
 }
 
-export async function getProfile(token?: string) {
+export async function getProfile(token?: string, logout?: () => void) {
   if (!token) redirect("/auth/login");
 
   const response = await fetch(
@@ -29,6 +29,12 @@ export async function getProfile(token?: string) {
       },
     }
   );
+  if (response.status === 401) {
+    if (logout) {
+      logout();
+    }
+    redirect("/auth/login");
+  }
 
   const data = await response.json();
   return data;

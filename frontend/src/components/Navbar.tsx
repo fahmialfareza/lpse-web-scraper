@@ -14,7 +14,7 @@ const Navbar = () => {
   useEffect(() => {
     if (token) {
       const fetchProfile = async () => {
-        const { data, message } = await getProfile(token);
+        const { data, message } = await getProfile(token, logout);
         if (!data) {
           toast.error(message);
           return;
@@ -24,13 +24,7 @@ const Navbar = () => {
       };
       fetchProfile();
     }
-  }, [token, setUser]);
-
-  useEffect(() => {
-    if (!token) {
-      router.push("/auth/login");
-    }
-  }, [token, router]);
+  }, [token, setUser, logout]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md transition-colors duration-300">
@@ -39,8 +33,11 @@ const Navbar = () => {
           <div className="flex-shrink-0">
             <Link
               href="/"
-              className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight"
+              className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight flex items-center gap-2"
             >
+              <span className="text-3xl" role="img" aria-label="web">
+                🕸️
+              </span>
               LPSE Web Scraper
             </Link>
           </div>
