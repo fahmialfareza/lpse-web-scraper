@@ -21,6 +21,7 @@ export default async function TenderAnalysisPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const { status } = await getProfile(token);
+  if (status === 401) cookieStore.delete("token");
   if (status === 401) {
     redirect("/auth/login");
   }
