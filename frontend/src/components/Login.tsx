@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-export default function Login() {
+export default function Login({ token: tokenFromCookie }: { token?: string }) {
   const router = useRouter();
-  const { setToken, setUser, user } = useStore();
+  const { setToken, setUser, token } = useStore();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,10 +28,12 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, [router, user]);
+    setToken(tokenFromCookie || "");
+  }, [tokenFromCookie, setToken]);
+
+  if (token) {
+    router.push("/");
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-4">

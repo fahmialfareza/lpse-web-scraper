@@ -19,5 +19,5 @@ export default async function LoginPage() {
     }
   }
 
-  return <Login />;
+  return <Login token={token} />;
 }

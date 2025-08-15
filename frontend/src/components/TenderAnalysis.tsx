@@ -36,7 +36,7 @@ export type TFilterState = {
 
 export default function TenderAnalysis() {
   const router = useRouter();
-  const { token, user, logout } = useStore();
+  const { token, logout } = useStore();
 
   const currentYear = new Date().getFullYear();
   const [filters, setFilters] = useState<TFilterState>({

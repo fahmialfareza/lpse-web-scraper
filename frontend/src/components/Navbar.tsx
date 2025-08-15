@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
-const Navbar = () => {
+const Navbar = ({ token: tokenFromCookie }: { token?: string }) => {
   const router = useRouter();
-  const { token, user, setUser, logout: logoutUser } = useStore();
+  const { token, user, setUser, logout: logoutUser, setToken } = useStore();
 
   useEffect(() => {
     if (token) {
@@ -24,7 +24,11 @@ const Navbar = () => {
       };
       fetchProfile();
     }
-  }, [token, setUser, logout]);
+  }, [token, setUser, logoutUser]);
+
+  useEffect(() => {
+    setToken(tokenFromCookie || "");
+  }, [tokenFromCookie, setToken]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-md transition-colors duration-300">
